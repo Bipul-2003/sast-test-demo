@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAST Demo - Vulnerable Web Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .vulnerability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .vuln-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .vuln-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .critical { border-left-color: #dc3545; }
+        .high { border-left-color: #fd7e14; }
+        .medium { border-left-color: #ffc107; }
+        .low { border-left-color: #28a745; }
+        .info { border-left-color: #17a2b8; }
+
+        .severity-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .badge-critical { background: #dc3545; }
+        .badge-high { background: #fd7e14; }
+        .badge-medium { background: #ffc107; color: #333; }
+        .badge-low { background: #28a745; }
+        .badge-info { background: #17a2b8; }
+
+        .demo-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .folder-structure {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            padding: 10px 20px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tab-button.active {
+            background: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 SAST Demo Website</h1>
+        <p class="subtitle">Comprehensive Security Testing Platform with 25+ Vulnerabilities</p>
+        
+        <div class="warning">
+            <strong>⚠️ Educational Purpose Only:</strong> This application contains intentional security vulnerabilities for SAST tool demonstration. Never deploy to production!
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="showTab('vulnerabilities')">Vulnerabilities</button>
+            <button class="tab-button" onclick="showTab('structure')">Project Structure</button>
+            <button class="tab-button" onclick="showTab('demo')">Live Demo</button>
+        </div>
+
+        <div id="vulnerabilities" class="tab-content">
+            <div class="vulnerability-grid">
+                <!-- CRITICAL VULNERABILITIES -->
+                <div class="vuln-card critical">
+                    <span class="severity-badge badge-critical">CRITICAL</span>
+                    <h3>SQL Injection</h3>
+                    <p>Raw SQL queries without parameterization allowing database manipulation.</p>
+                    <div class="code-block">
+String sql = "SELECT * FROM users WHERE id = " + userId;
+Statement stmt = connection.createStatement();
+ResultSet rs = stmt.executeQuery(sql);
+                    </div>
+                </div>
+
+                <div class="vuln-card critical">
+                    <span class="severity-badge badge-critical">CRITICAL</span>
+                    <h3>Command Injection</h3>
+                    <p>Direct execution of user input as system commands.</p>
+                    <div class="code-block">
+String command = "ping " + request.getParameter("host");
+Runtime.getRuntime().exec(command);
+                    </div>
+                </div>
+
+                <div class="vuln-card critical">
+                    <span class="severity-badge badge-critical">CRITICAL</span>
+                    <h3>Deserialization Attack</h3>
+                    <p>Unsafe deserialization of untrusted data.</p>
+                    <div class="code-block">
+ObjectInputStream ois = new ObjectInputStream(request.getInputStream());
+Object obj = ois.readObject(); // Dangerous!
+                    </div>
+                </div>
+
+                <div class="vuln-card critical">
+                    <span class="severity-badge badge-critical">CRITICAL</span>
+                    <h3>Path Traversal</h3>
+                    <p>File system access outside intended directory.</p>
+                    <div class="code-block">
+String filename = request.getParameter("file");
+File file = new File("/uploads/" + filename);
+                    </div>
+                </div>
+
+                <!-- HIGH VULNERABILITIES -->
+                <div class="vuln-card high">
+                    <span class="severity-badge badge-high">HIGH</span>
+                    <h3>Cross-Site Scripting (XSS)</h3>
+                    <p>Reflected XSS vulnerability in search functionality.</p>
+                    <div class="code-block">
+String search = request.getParameter("q");
+out.println("Search results for: " + search);
+                    </div>
+                </div>
+
+                <div class="vuln-card high">
+                    <span class="severity-badge badge-high">HIGH</span>
+                    <h3>CSRF Token Missing</h3>
+                    <p>State-changing operations without CSRF protection.</p>
+                    <div class="code-block">
+&lt;form action="/transfer" method="post"&gt;
+    &lt;input name="amount" value="1000"&gt;
+    &lt;input name="to" value="attacker"&gt;
+&lt;/form&gt;
+                    </div>
+                </div>
+
+                <div class="vuln-card high">
+                    <span class="severity-badge badge-high">HIGH</span>
+                    <h3>LDAP Injection</h3>
+                    <p>Unsafe LDAP query construction.</p>
+                    <div class="code-block">
+String filter = "(&(uid=" + username + ")(pwd=" + password + "))";
+ctx.search("ou=users,dc=example,dc=com", filter, controls);
+                    </div>
+                </div>
+
+                <div class="vuln-card high">
+                    <span class="severity-badge badge-high">HIGH</span>
+                    <h3>XXE (XML External Entity)</h3>
+                    <p>XML parser configured to process external entities.</p>
+                    <div class="code-block">
+DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+DocumentBuilder builder = factory.newDocumentBuilder();
+Document doc = builder.parse(userInput);
+                    </div>
+                </div>
+
+                <!-- MEDIUM VULNERABILITIES -->
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>Weak Cryptography</h3>
+                    <p>Usage of deprecated MD5 and SHA1 algorithms.</p>
+                    <div class="code-block">
+MessageDigest md = MessageDigest.getInstance("MD5");
+byte[] hash = md.digest(password.getBytes());
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>Insecure Random</h3>
+                    <p>Weak random number generation for security tokens.</p>
+                    <div class="code-block">
+Random random = new Random();
+String token = String.valueOf(random.nextInt());
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>Session Fixation</h3>
+                    <p>Session ID not regenerated after login.</p>
+                    <div class="code-block">
+HttpSession session = request.getSession(true);
+session.setAttribute("user", username);
+// Missing: session.invalidate() and new session
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>Insecure Direct Object Reference</h3>
+                    <p>Direct access to objects without authorization.</p>
+                    <div class="code-block">
+String userId = request.getParameter("userId");
+User user = getUserById(userId); // No auth check
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>SSRF (Server-Side Request Forgery)</h3>
+                    <p>Server makes requests to user-controlled URLs.</p>
+                    <div class="code-block">
+String url = request.getParameter("url");
+URL targetUrl = new URL(url);
+HttpURLConnection conn = (HttpURLConnection) targetUrl.openConnection();
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>Insecure Cookie Settings</h3>
+                    <p>Cookies without secure flags.</p>
+                    <div class="code-block">
+Cookie cookie = new Cookie("sessionId", sessionId);
+response.addCookie(cookie);
+// Missing: cookie.setSecure(true), setHttpOnly(true)
+                    </div>
+                </div>
+
+                <!-- LOW VULNERABILITIES -->
+                <div class="vuln-card low">
+                    <span class="severity-badge badge-low">LOW</span>
+                    <h3>Missing Security Headers</h3>
+                    <p>Absent X-Frame-Options, CSP, and other security headers.</p>
+                    <div class="code-block">
+response.setHeader("Content-Type", "text/html");
+// Missing security headers
+                    </div>
+                </div>
+
+                <div class="vuln-card low">
+                    <span class="severity-badge badge-low">LOW</span>
+                    <h3>Verbose Error Messages</h3>
+                    <p>Stack traces exposed to users.</p>
+                    <div class="code-block">
+catch (Exception e) {
+    out.println("Error: " + e.getMessage());
+    e.printStackTrace(); // Dangerous in production
+}
+                    </div>
+                </div>
+
+                <div class="vuln-card low">
+                    <span class="severity-badge badge-low">LOW</span>
+                    <h3>Weak Password Policy</h3>
+                    <p>No password complexity requirements.</p>
+                    <div class="code-block">
+if (password.length() >= 4) {
+    // Weak validation
+    createUser(username, password);
+}
+                    </div>
+                </div>
+
+                <div class="vuln-card low">
+                    <span class="severity-badge badge-low">LOW</span>
+                    <h3>Information Disclosure</h3>
+                    <p>Server version and technology stack revealed.</p>
+                    <div class="code-block">
+response.setHeader("Server", "Apache/2.4.41 (Ubuntu)");
+response.setHeader("X-Powered-By", "PHP/7.4.3");
+                    </div>
+                </div>
+
+                <!-- INFORMATIONAL -->
+                <div class="vuln-card info">
+                    <span class="severity-badge badge-info">INFO</span>
+                    <h3>Hardcoded Credentials</h3>
+                    <p>Database credentials in source code.</p>
+                    <div class="code-block">
+String dbUser = "admin";
+String dbPass = "password123";
+String dbUrl = "jdbc:mysql://localhost:3306/app";
+                    </div>
+                </div>
+
+                <div class="vuln-card info">
+                    <span class="severity-badge badge-info">INFO</span>
+                    <h3>Debug Information</h3>
+                    <p>Debug mode enabled in production.</p>
+                    <div class="code-block">
+boolean DEBUG = true;
+if (DEBUG) {
+    logger.info("User input: " + userInput);
+}
+                    </div>
+                </div>
+
+                <div class="vuln-card info">
+                    <span class="severity-badge badge-info">INFO</span>
+                    <h3>Dead Code</h3>
+                    <p>Unused functions and variables.</p>
+                    <div class="code-block">
+private void unusedMethod() {
+    // This method is never called
+    String unusedVar = "test";
+}
+                    </div>
+                </div>
+
+                <div class="vuln-card info">
+                    <span class="severity-badge badge-info">INFO</span>
+                    <h3>Vulnerable Dependencies</h3>
+                    <p>Outdated third-party libraries with known vulnerabilities.</p>
+                    <div class="code-block">
+&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
+    &lt;version&gt;2.9.8&lt;/version&gt; &lt;!-- Vulnerable version --&gt;
+&lt;/dependency&gt;
+                    </div>
+                </div>
+
+                <div class="vuln-card info">
+                    <span class="severity-badge badge-info">INFO</span>
+                    <h3>False Positive Example</h3>
+                    <p>Safe code that might trigger false positives.</p>
+                    <div class="code-block">
+// This is actually safe but might trigger alerts
+String query = "SELECT * FROM users WHERE id = ?";
+PreparedStatement stmt = connection.prepareStatement(query);
+stmt.setInt(1, userId);
+                    </div>
+                </div>
+
+                <div class="vuln-card medium">
+                    <span class="severity-badge badge-medium">MEDIUM</span>
+                    <h3>File Upload Vulnerability</h3>
+                    <p>Unrestricted file upload without validation.</p>
+                    <div class="code-block">
+MultipartFile file = request.getFile("upload");
+String filename = file.getOriginalFilename();
+file.transferTo(new File("/uploads/" + filename));
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="structure" class="tab-content hidden">
+            <h2>Project Structure</h2>
+            <div class="folder-structure">
+sast-demo-webapp/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── example/
+│   │   │           └── vulnerable/
+│   │   │               ├── controller/
+│   │   │               │   ├── LoginController.java           # Authentication bypass
+│   │   │               │   ├── SearchController.java          # XSS, SQL injection
+│   │   │               │   ├── FileController.java            # Path traversal, file upload
+│   │   │               │   ├── AdminController.java           # Broken access control
+│   │   │               │   └── ApiController.java             # CSRF, SSRF
+│   │   │               ├── service/
+│   │   │               │   ├── UserService.java               # Insecure direct object reference
+│   │   │               │   ├── CryptoService.java             # Weak cryptography
+│   │   │               │   ├── ValidationService.java         # Input validation bypass
+│   │   │               │   └── ConfigService.java             # Hardcoded credentials
+│   │   │               ├── model/
+│   │   │               │   ├── User.java                      # Sensitive data exposure
+│   │   │               │   ├── Session.java                   # Session management flaws
+│   │   │               │   └── Config.java                    # Security misconfiguration
+│   │   │               ├── util/
+│   │   │               │   ├── DatabaseUtil.java              # SQL injection utilities
+│   │   │               │   ├── CryptoUtil.java                # Weak crypto implementation
+│   │   │               │   ├── FileUtil.java                  # Path traversal helpers
+│   │   │               │   └── SecurityUtil.java              # False positive examples
+│   │   │               └── VulnerableApplication.java         # Main application
+│   │   ├── resources/
+│   │   │   ├── application.properties                         # Configuration vulnerabilities
+│   │   │   ├── database.properties                            # Hardcoded DB credentials
+│   │   │   ├── static/
+│   │   │   │   ├── css/
+│   │   │   │   │   └── style.css                              # CSS injection potential
+│   │   │   │   ├── js/
+│   │   │   │   │   ├── main.js                                # DOM-based XSS
+│   │   │   │   │   ├── jquery-1.8.3.min.js                   # Vulnerable jQuery version
+│   │   │   │   │   └── crypto-js-3.1.2.min.js                # Outdated crypto library
+│   │   │   │   └── images/
+│   │   │   └── templates/
+│   │   │       ├── login.html                                 # XSS vulnerabilities
+│   │   │       ├── search.html                                # Reflected XSS
+│   │   │       ├── upload.html                                # File upload form
+│   │   │       ├── admin.html                                 # Privilege escalation
+│   │   │       └── error.html                                 # Information disclosure
+│   │   └── webapp/
+│   │       ├── WEB-INF/
+│   │       │   ├── web.xml                                    # Security constraints missing
+│   │       │   └── applicationContext.xml                     # Bean injection vulnerabilities
+│   │       └── index.jsp                                      # Multiple vulnerabilities
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── example/
+│                   └── vulnerable/
+│                       ├── SecurityTest.java                  # Inadequate security tests
+│                       └── VulnerabilityTest.java             # Test cases for vulnerabilities
+├── pom.xml                                                    # Vulnerable dependencies
+├── build.gradle                                               # Alternative build with vulnerabilities
+├── Dockerfile                                                 # Container security issues
+├── docker-compose.yml                                         # Insecure container setup
+├── .env                                                       # Environment variables with secrets
+├── config/
+│   ├── nginx.conf                                             # Server misconfiguration
+│   └── ssl/
+│       ├── server.key                                         # Private key in repo
+│       └── server.crt                                         # Certificate issues
+├── scripts/
+│   ├── deploy.sh                                              # Deployment security issues
+│   ├── backup.sh                                              # Backup script vulnerabilities
+│   └── init.sql                                               # Database initialization
+├── logs/
+│   └── application.log                                        # Log injection samples
+└── README.md                                                  # Security documentation
+            </div>
+        </div>
+
+        <div id="demo" class="tab-content hidden">
+            <h2>Live Vulnerability Demonstrations</h2>
+            
+            <div class="demo-section">
+                <h3>🔍 XSS Demo</h3>
+                <p>Try entering: <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></p>
+                <input type="text" id="xssInput" placeholder="Enter search term...">
+                <button onclick="demonstrateXSS()">Search</button>
+                <div id="xssResult"></div>
+            </div>
+
+            <div class="demo-section">
+                <h3>💉 SQL Injection Demo</h3>
+                <p>Try entering: <code>' OR '1'='1</code></p>
+                <input type="text" id="sqlInput" placeholder="Enter user ID...">
+                <button onclick="demonstrateSQL()">Query Database</button>
+                <div id="sqlResult"></div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🔄 CSRF Demo</h3>
+                <p>Form without CSRF protection:</p>
+                <form id="csrfForm">
+                    <input type="text" name="amount" placeholder="Amount" value="100">
+                    <input type="text" name="recipient" placeholder="Recipient" value="alice">
+                    <button type="button" onclick="demonstrateCSRF()">Transfer Money</button>
+                </form>
+                <div id="csrfResult"></div>
+            </div>
+
+            <div class="demo-section">
+                <h3>📁 Path Traversal Demo</h3>
+                <p>Try entering: <code>../../../etc/passwd</code></p>
+                <input type="text" id="pathInput" placeholder="Enter file path...">
+                <button onclick="demonstratePath()">Read File</button>
+                <div id="pathResult"></div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🌐 SSRF Demo</h3>
+                <p>Enter a URL to fetch:</p>
+                <input type="text" id="ssrfInput" placeholder="http://example.com" value="http://localhost:8080/admin">
+                <button onclick="demonstrateSSRF()">Fetch URL</button>
+                <div id="ssrfResult"></div>
+            </div>
+
+            <div class="demo-section">
+                <h3>🔐 Weak Crypto Demo</h3>
+                <p>Password hashing with MD5:</p>
+                <input type="password" id="cryptoInput" placeholder="Enter password...">
+                <button onclick="demonstrateCrypto()">Hash Password</button>
+                <div id="cryptoResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const buttons = document.querySelectorAll('.tab-button');
+            
+            tabs.forEach(tab => tab.classList.add('hidden'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Vulnerability demonstrations
+        function demonstrateXSS() {
+            const input = document.getElementById('xssInput').value;
+            const result = document.getElementById('xssResult');
+            
+            // Deliberately unsafe - for demo purposes
+            result.innerHTML = `<p>Search results for: ${input}</p>`;
+        }
+
+        function demonstrateSQL() {
+            const input = document.getElementById('sqlInput').value;
+            const result = document.getElementById('sqlResult');
+            
+            // Simulated SQL injection
+            if (input.includes("'") || input.includes("OR")) {
+                result.innerHTML = `<div style="color: red;">
+                    <p>SQL Query: SELECT * FROM users WHERE id = ${input}</p>
+                    <p>⚠️ SQL Injection detected! This would expose all user data.</p>
+                </div>`;
+            } else {
+                result.innerHTML = `<p>SQL Query: SELECT * FROM users WHERE id = ${input}</p>`;
+            }
+        }
+
+        function demonstrateCSRF() {
+            const form = document.getElementById('csrfForm');
+            const result = document.getElementById('csrfResult');
+            
+            result.innerHTML = `<div style="color: orange;">
+                <p>⚠️ CSRF vulnerability! This form lacks CSRF protection.</p>
+                <p>An attacker could trick users into performing unwanted actions.</p>
+            </div>`;
+        }
+
+        function demonstratePath() {
+            const input = document.getElementById('pathInput').value;
+            const result = document.getElementById('pathResult');
+            
+            if (input.includes('..')) {
+                result.innerHTML = `<div style="color: red;">
+                    <p>File path: /app/files/${input}</p>
+                    <p>⚠️ Path traversal attack detected! This could access sensitive files.</p>
+                </div>`;
+            } else {
+                result.innerHTML = `<p>File path: /app/files/${input}</p>`;
+            }
+        }
+
+        function demonstrateSSRF() {
+            const input = document.getElementById('ssrfInput').value;
+            const result = document.getElementById('ssrfResult');
+            
+            if (input.includes('localhost') || input.includes('127.0.0.1')) {
+                result.innerHTML = `<div style="color: red;">
+                    <p>Attempting to fetch: ${input}</p>
+                    <p>⚠️ SSRF vulnerability! This could access internal services.</p>
+                </div>`;
+            } else {
+                result.innerHTML = `<p>Fetching: ${input}</p>`;
+            }
+        }
+
+        function demonstrateCrypto() {
+            const input = document.getElementById('cryptoInput').value;
+            const result = document.getElementById('cryptoResult');
+            
+            // Simulated MD5 hash (don't use in production!)
+            const hash = btoa(input).substring(0, 32); // Fake hash for demo
+            
+            result.innerHTML = `<div style="color: orange;">
+                <p>MD5 Hash: ${hash}</p>
+                <p>⚠️ Weak cryptography! MD5 is deprecated and easily crackable.</p>
+                <p>Use bcrypt, scrypt, or Argon2 instead.</p>
+            </div>`;
+        }
+
+        // Initialize with vulnerabilities tab
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('vulnerabilities');
+        });
+
+        // Some additional vulnerable JavaScript patterns
+        eval("console.log('This eval() usage is dangerous!')"); // Code injection vulnerability
+        
+        // DOM-based XSS vulnerability
+        function updateContent(userInput) {
+            document.getElementById('content').innerHTML = userInput;
+        }
+        
+        // Insecure random number generation
+        function generateToken() {
+            return Math.random().toString(36).substring(2);
+        }
+        
+        // Local storage of sensitive data
+        function storeCredentials(username, password) {
+            // Note: We can't actually use localStorage in this environment
+            console.log('Storing credentials insecurely...');
+        }
+    </script>
+</body>
+</html>
